@@ -1,0 +1,3 @@
+
+    dataset dùng để load bộ 3 ảnh
+    triple_generator chọn anchor , positive, negative path để load

@@ -1,13 +1,10 @@
-from deepface.models.facial_recognition import VGGFace
 from deepface.models.facial_recognition.VGGFace import VggFaceClient
-from deepface.modules import preprocessing
-from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
-import tensorflow_addons as tfa
+from tensorflow.keras.layers import Dense, Dropout, BatchNormalization, Flatten
+from tensorflow.keras.models import Model
+
 import tensorflow as tf
-import numpy as np
-import os
-import cv2
-from tensorflow.keras.layers import Lambda
+
+from module import config
 
 def vggface_preprocessing_layer(x):
     # Subtract mean values for VGGFace (RGB)
@@ -55,3 +52,9 @@ class FacialRecognitionModel:
         if self.model is None:
             self.load_model()
         return self.model
+
+    def get_embedding_model(self):
+        my_model = tf.keras.models.load_model(config.CHECK_POINT)
+        my_model_output = Flatten()(my_model.layers[-10].output)
+        embedding_model = Model(inputs=my_model.input, outputs=my_model_output)
+        return embedding_model

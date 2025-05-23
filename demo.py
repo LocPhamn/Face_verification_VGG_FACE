@@ -1,7 +1,11 @@
-from deepface.modules import representation, detection, verification
+from deepface.modules import representation, detection, verification, preprocessing
+from model.classification_model import FacialRecognitionModel
 import cv2
 import threading
 
+
+face_model = FacialRecognitionModel()
+embedding_mode = face_model.get_embedding_model()
 # ==== PREPROCESS FUNCTION ====
 def preprocess(path):
     if isinstance(path, str):
@@ -14,8 +18,9 @@ def preprocess(path):
         return None, None  # không có mặt
 
     face_img = faces[0].img
+    face_img = preprocessing.resize_image(face_img,(224,224))
     face_bb = faces[0].facial_area  # dict với x, y, w, h
-    embedding_img = representation.represent(face_img, detector_backend="skip")[0]["embedding"]
+    embedding_img = embedding_mode.predict(face_img)
     return embedding_img, face_bb
 
 # ==== THREADED PREPROCESS ====
